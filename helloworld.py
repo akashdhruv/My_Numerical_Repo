@@ -1,0 +1,9 @@
+import numpy as np
+import matplotlib.pyplog as plt
+
+x=np.linspace(0,10,10)
+for i in range(10):
+	print "Hello World, Loop Counter: ", x[i]
+
+
+print "Loop over"
