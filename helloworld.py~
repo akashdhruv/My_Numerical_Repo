@@ -7,4 +7,3 @@ for i in range(10):
 
 
 print "Loop over"
-print "Trying to push offline."
