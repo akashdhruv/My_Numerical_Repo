@@ -1,0 +1,75 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from math import *
+
+nu=0.01
+Nx=60
+Ny=60
+xd=np.linspace(0.0,2.5,Nx)
+yd=np.linspace(0.0,1.0,Ny)
+dx=xd[1]-xd[0]
+dy=yd[1]-yd[0]
+
+
+x=np.zeros((Nx+2,Ny+2),dtype=float)
+y=np.zeros((Nx+2,Ny+2),dtype=float)
+for i in range(Nx):
+	for j in range(Ny):
+		x[i+1][j+1]=xd[i]
+		y[i+1][j+1]=yd[j]
+x[0,:]=x[1,:]-dx
+y[0,:]=y[1,:]
+
+x[-1,:]=x[-2,:]+dx
+y[-1,:]=y[-2,:]
+
+y[:,0]=y[:,1]-dy
+x[:,0]=x[:,1]
+
+y[:,-1]=y[:,-2]+dy
+x[:,-1]=x[:,-2]
+
+plt.figure()
+plt.scatter(x,y)
+plt.axis('equal')
+plt.show()
+
+u=np.zeros((Nx+2,Ny+2),dtype=float)
+
+T=20
+sigma = .02 
+dt = sigma*dx**2/nu 
+
+Nt=int(T/dt)
+t=np.linspace(0,T,Nt)
+
+nk=0
+
+
+for k in range(Nt):
+	
+	
+	un=u.copy()
+	
+	for i in range(1,Nx+1):
+		for j in range(1,Ny+1):
+			u[i][j]=un[i][j]+((nu*dt)/(dy*dy))*(un[i][j+1]+un[i][j-1]-2*un[i][j])+\
+				((nu*dt)/(dx*dx))*(un[i+1][j]+un[i-1][j]-2*un[i][j])
+	
+	u[0,:]=2*50-u[1,:]
+	u[-1,:]=2*20-u[-2,:]
+	u[:,0]=2*30-u[:,1]
+	u[:,-1]=2*30-u[:,-2]
+
+#	if(Nt%30==0):
+#		nk=nk+1
+#		p=plt.plot(x,u,label='t=%f'%t[i])
+#		#plt.xlabel('X')
+		#plt.ylabel('Temeprature')
+
+plt.contourf(x[1:Nx,1:Ny],y[1:Nx,1:Ny],u[1:Nx,1:Ny])
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.axis('equal')
+plt.show()		
+#plt.savefig('f_%d.png'%k)
