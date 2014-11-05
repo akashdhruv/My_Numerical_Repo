@@ -1,45 +1,6 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 
-# linear convection function
-def linearconv(nx):
-	"""
-	Solves linear convection eqn
-	d_t u + c d_x = 0
-	- the wave speed is set at 1
-	- domain in x: [0,2]
-	- 20 timesteps with dt = 0.025
-	- IC: hat function
-
-	plots results
-
-	Parameter: nx - int - number of internal grid points
-	Returns: none
-	"""
-	# IC
-	dx = 2./(nx-1)
-	nt = 20
-	dt = 0.025
-	c = 1
-
-	# Hat fn
-	u = np.ones(nx)
-	u[.5/dx : 1/dx+1] = 2
-
-	un = np.ones(nx)
-
-	for n in range(nt):
-		un = u.copy()
-		u[1:] = un[1:] - c*dt/dx*(un[1:] - un[0:-1])
-		u[0] = 1.0
-
-	plt.figure
-	plt.plot(np.linspace(0,2,nx), u)
-	plt.ylim(0,2.5)
-	plt.show()
-
-# using linear convection fn
-# linearconv(41)
 
 # ---------- code rewritten with the CFL condition --------
 
@@ -55,47 +16,57 @@ def linearconv(nx):
 	"""
 
 	# IC
-	dx = 2./(nx-1)
+	dx = 1./(nx-1)
 	nt = 800
 	c = 1.
-	sigma = 0.005 # CFL condition
+	sigma = 1./2. # CFL condition
 
-	dt = sigma*dx
+	dt =sigma*dx/c
 
 	# hat fn
 	x=0;
 	u = np.ones(nx)
+	#for i in range(len(u)):
+	#	x=x+dx
+	#	if(x<=0.9):
+	#		u[i]=0.0
+	#	elif(x>0.9 and x<=1.0):
+	#		u[i]=10*(x-0.9)
+	#	elif(x>1 and x<=1.1):
+	#		u[i]=10*(1.1-x)
+	#	elif(x>1.1):
+	#		u[i]=0
+
 	for i in range(len(u)):
 		x=x+dx
-		if(x<=0.9):
+		if(x<=0.5):
+			u[i]=1.0
+		elif(x>0.5 and x<=1.0):
 			u[i]=0.0
-		elif(x>0.9 and x<=1.0):
-			u[i]=10*(x-0.9)
-		elif(x>1 and x<=1.1):
-			u[i]=10*(1.1-x)
-		elif(x>1.1):
-			u[i]=0
-
+	print x
 	un = np.ones(nx)
 	u_ini=u.copy()
 
-
-	for n in range(nt):
+	time =0
+	while (time<=50):
 		un = u.copy()
 		for j in range(1,nx-1):
 		
-			u[j] = un[j] - c*dt/(2*dx)*(u[j+1]-u[j-1])
+			#u[j] = 0.5*(un[j+1]+un[j-1]) - c*dt/(2*dx)*(un[j+1]-un[j-1]) # Lax-Scheme
+			u[j] = un[j] - c*dt/(dx)*(un[j]-un[j-1]) # First order upwind
+			#u[j] = un[j] - c*dt/(2*dx)*(un[j+1]-un[j-1]) # Central Difference
 
-		u[0]=u[1]
-		u[nx-1]=u[-1]
-	print dt*nt	
+		u[0]=u[-1]
+		u[nx-1]=u[1]
+		time=time+dt
+	
 	plt.figure()
-	plt.plot(np.linspace(0,3,nx), u)
+	plt.plot(np.linspace(0,3,nx), u,'b')
 	plt.plot(np.linspace(0,3,nx),u_ini,'--r')
 	plt.ylim(0,2.5)
 	plt.show()
-
 # testing modified linear convection fn
-linearconv(75)
+nx=900
+linearconv(nx)
 
 
