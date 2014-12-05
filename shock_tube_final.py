@@ -45,8 +45,8 @@ def solver(u, nt, dt, dx):
         ustar[:,:-1]=0.5*(un[:,1:]+un[:,:-1])-(dt/(2*dx))*(F[:,1:]-F[:,:-1])
 	ustar[:,0]=ustar[:,1]
         Fs=get_f(ustar)
-        u[:,1:-1]=epsilon*(un[:,2:]-2*un[:,1:-1]+un[:,:-2])+un[:,1:-1]-(dt/dx)*(Fs[:,1:-1]-Fs[:,:-2])
-	#u[:,1:-1]=un[:,1:-1]-(dt/dx)*(Fs[:,1:-1]-Fs[:,:-2])
+        #[:,1:-1]=epsilon*(un[:,2:]-2*un[:,1:-1]+un[:,:-2])+un[:,1:-1]-(dt/dx)*(Fs[:,1:-1]-Fs[:,:-2])
+	u[:,1:-1]=un[:,1:-1]-(dt/dx)*(Fs[:,1:-1]-Fs[:,:-2])
 	u[:,0]=u[:,1]
 	u[:,-1]=u[:,-2]
 	#plt.figure
@@ -66,15 +66,15 @@ x = np.linspace(-10.,10.,nx)
 U = u_initial(x)
 u=solver(U,nt,dt,dx)
 
-plt.figure
+plt.figure()
 plt.plot(x,u[1,:]/u[0,:],'-b.')
 plt.show()
 
-plt.figure
+plt.figure()
 plt.plot(x,0.4*(u[2,:]-u[1,:]**2/u[0,:]),'-b.')
 plt.show()
 
-plt.figure
+plt.figure()
 plt.plot(x,u[0,:],'-b.')
 plt.show()
 
